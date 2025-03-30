@@ -12,69 +12,138 @@ local function createPlatformSelector()
     selectionGui.ResetOnSpawn = false
     selectionGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-    -- Создаем затемненный фон
+    -- Создаем затемненный фон с эффектом размытия
     local backgroundDim = Instance.new("Frame")
     backgroundDim.Name = "BackgroundDim"
     backgroundDim.Size = UDim2.new(1, 0, 1, 0)
     backgroundDim.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     backgroundDim.BackgroundTransparency = 1
+
+    -- Добавляем эффект размытия
+    local blur = Instance.new("BlurEffect")
+    blur.Size = 0
+    blur.Parent = game:GetService("Lighting")
     backgroundDim.Parent = selectionGui
 
-    -- Основной фрейм
+    -- Основной фрейм с градиентом
     local mainFrame = Instance.new("Frame")
     mainFrame.Name = "MainFrame"
-    mainFrame.Size = UDim2.new(0, 300, 0, 200)
-    mainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+    local height = 300 -- Увеличиваем высоту для аватара
+    mainFrame.Size = UDim2.new(0, 300, 0, height)
+    mainFrame.Position = UDim2.new(0.5, -150, 0.5, -height/2)
     mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
     mainFrame.BorderSizePixel = 0
     mainFrame.BackgroundTransparency = 1
     mainFrame.Parent = selectionGui
+
+    -- Добавляем градиент
+    local gradient = Instance.new("UIGradient")
+    gradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(35, 35, 45)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(25, 25, 35))
+    })
+    gradient.Rotation = 45
+    gradient.Parent = mainFrame
 
     -- Скругление углов
     local UICorner = Instance.new("UICorner")
     UICorner.CornerRadius = UDim.new(0, 8)
     UICorner.Parent = mainFrame
 
+    -- Добавляем изображение персонажа
+    local playerImage = Instance.new("ImageLabel")
+    playerImage.Name = "PlayerImage"
+    playerImage.Size = UDim2.new(0, 100, 0, 100)
+    playerImage.Position = UDim2.new(0.5, -50, 0, 20)
+    playerImage.BackgroundTransparency = 1
+    playerImage.Image = "rbxthumb://type=AvatarHeadShot&id=" .. game.Players.LocalPlayer.UserId .. "&w=100&h=100"
+    playerImage.BackgroundTransparency = 1
+    playerImage.Parent = mainFrame
+
+    -- Добавляем круглую рамку для аватара
+    local imageCorner = Instance.new("UICorner")
+    imageCorner.CornerRadius = UDim.new(0.5, 0)
+    imageCorner.Parent = playerImage
+
+    -- Добавляем светящийся ободок
+    local glow = Instance.new("ImageLabel")
+    glow.Name = "Glow"
+    glow.Size = UDim2.new(1.2, 0, 1.2, 0)
+    glow.Position = UDim2.new(-0.1, 0, -0.1, 0)
+    glow.BackgroundTransparency = 1
+    glow.Image = "rbxassetid://4996891970" -- Изображение свечения
+    glow.ImageColor3 = Color3.fromRGB(115, 125, 255)
+    glow.ImageTransparency = 1
+    glow.Parent = playerImage
+
     -- Заголовок
     local titleLabel = Instance.new("TextLabel")
     titleLabel.Name = "Title"
     titleLabel.Size = UDim2.new(1, 0, 0, 40)
-    titleLabel.Position = UDim2.new(0, 0, 0, 10)
+    titleLabel.Position = UDim2.new(0, 0, 0, 130)
     titleLabel.BackgroundTransparency = 1
-    titleLabel.Text = "Select Platform"
+    titleLabel.Text = "Select Method"
     titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     titleLabel.TextSize = 24
     titleLabel.Font = Enum.Font.GothamBold
     titleLabel.TextTransparency = 1
     titleLabel.Parent = mainFrame
 
-    -- Дата и время
+    -- Дата и время с иконкой
+    local dateTimeFrame = Instance.new("Frame")
+    dateTimeFrame.Size = UDim2.new(0.8, 0, 0, 20)
+    dateTimeFrame.Position = UDim2.new(0.1, 0, 0, 180)
+    dateTimeFrame.BackgroundTransparency = 1
+    dateTimeFrame.Parent = mainFrame
+
+    local clockIcon = Instance.new("ImageLabel")
+    clockIcon.Size = UDim2.new(0, 16, 0, 16)
+    clockIcon.Position = UDim2.new(0, 0, 0, 2)
+    clockIcon.BackgroundTransparency = 1
+    clockIcon.Image = "rbxassetid://7733993311" -- Иконка часов
+    clockIcon.ImageColor3 = Color3.fromRGB(200, 200, 200)
+    clockIcon.ImageTransparency = 1
+    clockIcon.Parent = dateTimeFrame
+
     local dateTimeLabel = Instance.new("TextLabel")
-    dateTimeLabel.Name = "DateTime"
-    dateTimeLabel.Size = UDim2.new(1, 0, 0, 20)
-    dateTimeLabel.Position = UDim2.new(0, 0, 0, 50)
+    dateTimeLabel.Size = UDim2.new(1, -24, 1, 0)
+    dateTimeLabel.Position = UDim2.new(0, 24, 0, 0)
     dateTimeLabel.BackgroundTransparency = 1
     dateTimeLabel.Text = getCurrentUTCTime()
     dateTimeLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
     dateTimeLabel.TextSize = 14
     dateTimeLabel.Font = Enum.Font.GothamMedium
     dateTimeLabel.TextTransparency = 1
-    dateTimeLabel.Parent = mainFrame
+    dateTimeLabel.Parent = dateTimeFrame
 
-    -- Имя пользователя
+    -- Имя пользователя с иконкой
+    local userFrame = Instance.new("Frame")
+    userFrame.Size = UDim2.new(0.8, 0, 0, 20)
+    userFrame.Position = UDim2.new(0.1, 0, 0, 210)
+    userFrame.BackgroundTransparency = 1
+    userFrame.Parent = mainFrame
+
+    local userIcon = Instance.new("ImageLabel")
+    userIcon.Size = UDim2.new(0, 16, 0, 16)
+    userIcon.Position = UDim2.new(0, 0, 0, 2)
+    userIcon.BackgroundTransparency = 1
+    userIcon.Image = "rbxassetid://7733992783" -- Иконка пользователя
+    userIcon.ImageColor3 = Color3.fromRGB(200, 200, 200)
+    userIcon.ImageTransparency = 1
+    userIcon.Parent = userFrame
+
     local userLabel = Instance.new("TextLabel")
-    userLabel.Name = "UserName"
-    userLabel.Size = UDim2.new(1, 0, 0, 20)
-    userLabel.Position = UDim2.new(0, 0, 0, 70)
+    userLabel.Size = UDim2.new(1, -24, 1, 0)
+    userLabel.Position = UDim2.new(0, 24, 0, -10)
     userLabel.BackgroundTransparency = 1
     userLabel.Text = "User: " .. game.Players.LocalPlayer.Name
     userLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
     userLabel.TextSize = 14
     userLabel.Font = Enum.Font.GothamMedium
     userLabel.TextTransparency = 1
-    userLabel.Parent = mainFrame
+    userLabel.Parent = userFrame
 
-    -- Функция создания кнопки
+    -- Функция создания кнопки с улучшенным дизайном
     local function createButton(text, position)
         local button = Instance.new("TextButton")
         button.Size = UDim2.new(0.8, 0, 0, 40)
@@ -86,75 +155,139 @@ local function createPlatformSelector()
         button.Font = Enum.Font.GothamBold
         button.BackgroundTransparency = 1
         button.TextTransparency = 1
+        button.AutoButtonColor = false
         button.Parent = mainFrame
         
         local buttonCorner = Instance.new("UICorner")
         buttonCorner.CornerRadius = UDim.new(0, 6)
         buttonCorner.Parent = button
         
-        return button
+        -- Добавляем градиент для кнопки
+        local buttonGradient = Instance.new("UIGradient")
+        buttonGradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(45, 45, 55)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(35, 35, 45))
+        })
+        buttonGradient.Rotation = 45
+        buttonGradient.Parent = button
+        
+        -- Добавляем свечение
+        local glow = Instance.new("ImageLabel")
+        glow.Size = UDim2.new(1.1, 0, 1.1, 0)
+        glow.Position = UDim2.new(-0.05, 0, -0.05, 0)
+        glow.BackgroundTransparency = 1
+        glow.Image = "rbxassetid://4996891970"
+        glow.ImageColor3 = Color3.fromRGB(115, 125, 255)
+        glow.ImageTransparency = 1
+        glow.ZIndex = button.ZIndex - 1
+        glow.Parent = button
+        
+        return button, glow
     end
 
     -- Создаем кнопки
-    local pcButton = createButton("PC Version", UDim2.new(0.1, 0, 0, 110))
-    local mobileButton = createButton("Mobile Version", UDim2.new(0.1, 0, 0, 160))
+    local pcButton, pcGlow = createButton("PC Version", UDim2.new(0.1, 0, 0, 220))
+    local mobileButton, mobileGlow = createButton("Mobile Version", UDim2.new(0.1, 0, 0, 260))
 
     -- Анимация появления
     local TweenService = game:GetService("TweenService")
     local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 
     -- Анимируем появление всех элементов
+    TweenService:Create(blur, tweenInfo, {Size = 20}):Play()
     TweenService:Create(backgroundDim, tweenInfo, {BackgroundTransparency = 0.5}):Play()
     TweenService:Create(mainFrame, tweenInfo, {BackgroundTransparency = 0}):Play()
     TweenService:Create(titleLabel, tweenInfo, {TextTransparency = 0}):Play()
     TweenService:Create(dateTimeLabel, tweenInfo, {TextTransparency = 0}):Play()
     TweenService:Create(userLabel, tweenInfo, {TextTransparency = 0}):Play()
-    
-    wait(0.3) -- Небольшая задержка перед появлением кнопок
+    TweenService:Create(clockIcon, tweenInfo, {ImageTransparency = 0}):Play()
+    TweenService:Create(userIcon, tweenInfo, {ImageTransparency = 0}):Play()
+    TweenService:Create(playerImage, tweenInfo, {ImageTransparency = 0}):Play()
+    TweenService:Create(glow, tweenInfo, {ImageTransparency = 0.7}):Play()
+
+    wait(0.3)
 
     -- Анимируем появление кнопок
     TweenService:Create(pcButton, tweenInfo, {BackgroundTransparency = 0, TextTransparency = 0}):Play()
     TweenService:Create(mobileButton, tweenInfo, {BackgroundTransparency = 0, TextTransparency = 0}):Play()
 
-    -- Добавляем эффекты наведения для кнопок
-    local function setupButtonEffects(button)
+    -- Добавляем улучшенные эффекты наведения для кнопок
+    local function setupButtonEffects(button, glow)
         button.MouseEnter:Connect(function()
             TweenService:Create(button, TweenInfo.new(0.2), {
-                BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+                BackgroundColor3 = Color3.fromRGB(45, 45, 55),
+                Size = UDim2.new(0.82, 0, 0, 42) -- Небольшое увеличение размера
+            }):Play()
+            TweenService:Create(glow, TweenInfo.new(0.2), {
+                ImageTransparency = 0.5
             }):Play()
         end)
         
         button.MouseLeave:Connect(function()
             TweenService:Create(button, TweenInfo.new(0.2), {
-                BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+                BackgroundColor3 = Color3.fromRGB(35, 35, 45),
+                Size = UDim2.new(0.8, 0, 0, 40)
+            }):Play()
+            TweenService:Create(glow, TweenInfo.new(0.2), {
+                ImageTransparency = 0.7
+            }):Play()
+        end)
+        
+        button.MouseButton1Down:Connect(function()
+            TweenService:Create(button, TweenInfo.new(0.1), {
+                Size = UDim2.new(0.78, 0, 0, 38)
+            }):Play()
+        end)
+        
+        button.MouseButton1Up:Connect(function()
+            TweenService:Create(button, TweenInfo.new(0.1), {
+                Size = UDim2.new(0.8, 0, 0, 40)
             }):Play()
         end)
     end
 
-    setupButtonEffects(pcButton)
-    setupButtonEffects(mobileButton)
+    setupButtonEffects(pcButton, pcGlow)
+    setupButtonEffects(mobileButton, mobileGlow)
 
-    -- Обработка нажатий на кнопки
-    pcButton.MouseButton1Click:Connect(function()
-        -- Анимация исчезновения селектора
-        TweenService:Create(backgroundDim, tweenInfo, {BackgroundTransparency = 1}):Play()
-        TweenService:Create(mainFrame, tweenInfo, {BackgroundTransparency = 1}):Play()
-        wait(0.5)
-        selectionGui:Destroy()
+    -- Обработка нажатий на кнопки с улучшенной анимацией
+    local function handleButtonClick(button, loadFunction)
+        -- Анимация нажатия
+        TweenService:Create(button, TweenInfo.new(0.2), {
+            BackgroundTransparency = 1,
+            TextTransparency = 1
+        }):Play()
         
-        -- Запуск PC версии меню
-        loadPCVersion()
+        -- Анимация исчезновения всех элементов
+        TweenService:Create(blur, tweenInfo, {Size = 0}):Play()
+        TweenService:Create(backgroundDim, tweenInfo, {BackgroundTransparency = 1}):Play()
+        TweenService:Create(mainFrame, tweenInfo, {
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0.5, -150, 0.6, -height/2)
+        }):Play()
+        
+        wait(0.5)
+        blur:Destroy()
+        selectionGui:Destroy()
+        loadFunction()
+    end
+
+    pcButton.MouseButton1Click:Connect(function()
+        handleButtonClick(pcButton, loadPCVersion)
     end)
 
     mobileButton.MouseButton1Click:Connect(function()
-        -- Анимация исчезновения селектора
-        TweenService:Create(backgroundDim, tweenInfo, {BackgroundTransparency = 1}):Play()
-        TweenService:Create(mainFrame, tweenInfo, {BackgroundTransparency = 1}):Play()
-        wait(0.5)
-        selectionGui:Destroy()
-        
-        -- Запуск мобильной версии меню
-        loadMobileVersion()
+        handleButtonClick(mobileButton, loadMobileVersion)
+    end)
+
+    -- Обновление времени в реальном времени
+    spawn(function()
+        while wait(1) do
+            if dateTimeLabel.Parent then
+                dateTimeLabel.Text = getCurrentUTCTime()
+            else
+                break
+            end
+        end
     end)
 end
 
@@ -203,7 +336,7 @@ function loadPCVersion()
 
 
     -- Здесь вставьте ваш основной код меню
-    local UserInputService = game:GetService("UserInputService")
+local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 
 -- Main UI configuration
@@ -216,7 +349,8 @@ local MenuSystem = {
 }
 
 -- Color scheme
-local Colors = {
+-- First modify the Colors definition to be accessible through MenuSystem
+MenuSystem.Colors = {
     Background = Color3.fromRGB(25, 25, 35),
     TabBar = Color3.fromRGB(30, 30, 40),
     Button = Color3.fromRGB(35, 35, 45),
@@ -224,6 +358,8 @@ local Colors = {
     AccentColor = Color3.fromRGB(115, 125, 255),
     TextColor = Color3.fromRGB(255, 255, 255)
 }
+
+local Colors = MenuSystem.Colors -- Keep local reference for easier access
 
 -- Create the main frame with rounded corners
 local screenGui = Instance.new("ScreenGui")
@@ -434,66 +570,216 @@ function MenuSystem.switchTab(tabName)
     MenuSystem.CurrentTab = tabName
 end
 
--- Enhanced button creation with improved visuals
+-- Enhanced button creation with improved visuals and auto-sizing background
 function MenuSystem.createButton(tabName, position, text, callback)
+    -- Store keybinds globally
+    if not MenuSystem.Keybinds then
+        MenuSystem.Keybinds = {}
+    end
+
     for _, tab in ipairs(MenuSystem.Tabs) do
         if tab.Name == tabName then
             tab.ButtonCount = tab.ButtonCount + 1
             
+            -- Create container frame for auto-sizing
+            local buttonContainer = Instance.new("Frame")
+            buttonContainer.Name = "ButtonContainer_" .. tab.ButtonCount
+            buttonContainer.BackgroundTransparency = 1
+            buttonContainer.Size = UDim2.new(0.95, 0, 0, MenuSystem.ButtonHeight)
+            buttonContainer.Position = UDim2.new(0.025, 0, 0, (position - 1) * (MenuSystem.ButtonHeight + MenuSystem.ButtonSpacing))
+            buttonContainer.Parent = tab.Frame
+            
+            -- Create text label to measure text size
+            local textLabel = Instance.new("TextLabel")
+            textLabel.Text = text or "Button " .. tab.ButtonCount
+            textLabel.BackgroundTransparency = 1
+            textLabel.Font = Enum.Font.GothamMedium
+            textLabel.TextSize = 14
+            textLabel.Size = UDim2.new(0, 1000, 0, MenuSystem.ButtonHeight)
+            textLabel.TextXAlignment = Enum.TextXAlignment.Left
+            textLabel.Parent = buttonContainer
+            
+            task.wait()
+            
+            local textWidth = textLabel.TextBounds.X
+            local buttonWidth = textWidth + 20
+            
             local button = Instance.new("TextButton")
             button.Name = "Button_" .. tab.ButtonCount
-            button.Size = UDim2.new(0.95, 0, 0, MenuSystem.ButtonHeight)
-            button.Position = UDim2.new(0.025, 0, 0, (position - 1) * (MenuSystem.ButtonHeight + MenuSystem.ButtonSpacing))
+            button.Size = UDim2.new(0, buttonWidth, 1, 0)
+            button.Position = UDim2.new(0, 0, 0, 0)
             button.BackgroundColor3 = Colors.Button
             button.Text = text or "Button " .. tab.ButtonCount
             button.TextColor3 = Colors.TextColor
             button.Font = Enum.Font.GothamMedium
             button.TextSize = 14
             button.AutoButtonColor = false
-            button.Parent = tab.Frame
+            button.Parent = buttonContainer
+            button.TextXAlignment = Enum.TextXAlignment.Left
+
+            local originalText = button.Text
             
-            -- Add rounded corners to button
+            local padding = Instance.new("UIPadding")
+            padding.PaddingLeft = UDim.new(0, 10)
+            padding.Parent = button
+            
             local buttonCorner = Instance.new("UICorner")
             buttonCorner.CornerRadius = UDim.new(0, 6)
             buttonCorner.Parent = button
             
+            textLabel:Destroy()
+
+            -- Keybind handling
+            local currentKeybind = nil
+            local waitingForBind = false
+
+            -- Store button reference in global keybinds table
+            MenuSystem.Keybinds[button] = {
+                originalText = originalText,
+                currentKeybind = nil,
+                reset = function()
+                    currentKeybind = nil
+                    button.Text = originalText
+                    button.TextColor3 = Colors.TextColor
+                    MenuSystem.showNotification(
+                        "Keybind Reset",
+                        "Removed keybind for " .. originalText,
+                        "info"
+                    )
+                end
+            }
+
+            -- Right click to start binding or reset if in Keybinds tab
+            button.MouseButton2Click:Connect(function()
+                if tab.Name == "Keybinds" then
+                    -- If in Keybinds tab, find and reset the corresponding button
+                    for btn, data in pairs(MenuSystem.Keybinds) do
+                        if btn.Text == button.Text and data.currentKeybind then
+                            data.reset()
+                            -- Remove this button from Keybinds tab
+                            button:Destroy()
+                            -- Reposition remaining buttons
+                            local yPosition = 0
+                            for _, child in ipairs(tab.Frame:GetChildren()) do
+                                if child:IsA("TextButton") then
+                                    child.Position = UDim2.new(0.025, 0, 0, yPosition)
+                                    yPosition = yPosition + (MenuSystem.ButtonHeight + MenuSystem.ButtonSpacing)
+                                end
+                            end
+                            -- Update canvas size
+                            tab.ButtonCount = tab.ButtonCount - 1
+                            tab.Frame.CanvasSize = UDim2.new(0, 0, 0, tab.ButtonCount * (MenuSystem.ButtonHeight + MenuSystem.ButtonSpacing))
+                            break
+                        end
+                    end
+                else
+                    waitingForBind = true
+                    button.Text = "Press any key..."
+                    button.TextColor3 = Color3.fromRGB(255, 255, 0)
+                end
+            end)
+
+            -- Listen for key press
+            UserInputService.InputBegan:Connect(function(input)
+                if waitingForBind then
+                    if input.UserInputType == Enum.UserInputType.Keyboard then
+                        currentKeybind = input.KeyCode
+                        MenuSystem.Keybinds[button].currentKeybind = currentKeybind
+                        waitingForBind = false
+                        button.Text = originalText .. " [" .. input.KeyCode.Name .. "]"
+                        button.TextColor3 = Colors.TextColor
+                        
+                        -- Create or update keybind button in Keybinds tab
+                        local keybindButton = nil
+                        for _, tab in ipairs(MenuSystem.Tabs) do
+                            if tab.Name == "Keybinds" then
+                                keybindButton = MenuSystem.createButton("Keybinds", tab.ButtonCount + 1, button.Text, function()
+                                    -- Reset keybind when clicked in Keybinds tab
+                                    MenuSystem.Keybinds[button].reset()
+                                    -- Remove this button
+                                    keybindButton:Destroy()
+                                    -- Reposition remaining buttons
+                                    local yPosition = 0
+                                    for _, child in ipairs(tab.Frame:GetChildren()) do
+                                        if child:IsA("TextButton") then
+                                            child.Position = UDim2.new(0.025, 0, 0, yPosition)
+                                            yPosition = yPosition + (MenuSystem.ButtonHeight + MenuSystem.ButtonSpacing)
+                                        end
+                                    end
+                                    -- Update canvas size
+                                    tab.ButtonCount = tab.ButtonCount - 1
+                                    tab.Frame.CanvasSize = UDim2.new(0, 0, 0, tab.ButtonCount * (MenuSystem.ButtonHeight + MenuSystem.ButtonSpacing))
+                                end)
+                                break
+                            end
+                        end
+                        
+                        MenuSystem.showNotification(
+                            "Keybind Set",
+                            "Bound " .. originalText .. " to " .. input.KeyCode.Name,
+                            "success"
+                        )
+                    end
+                else
+                    if currentKeybind and input.KeyCode == currentKeybind then
+                        if callback then
+                            callback()
+                        end
+                    end
+                end
+            end)
+            
             -- Enhanced hover effects
             button.MouseEnter:Connect(function()
-                TweenService:Create(button, TweenInfo.new(0.2), {
-                    BackgroundColor3 = Colors.ButtonHover
-                }):Play()
+                if not waitingForBind then
+                    TweenService:Create(button, TweenInfo.new(0.2), {
+                        BackgroundColor3 = Colors.ButtonHover
+                    }):Play()
+                end
             end)
             
             button.MouseLeave:Connect(function()
-                TweenService:Create(button, TweenInfo.new(0.2), {
-                    BackgroundColor3 = Colors.Button
-                }):Play()
+                if not waitingForBind then
+                    TweenService:Create(button, TweenInfo.new(0.2), {
+                        BackgroundColor3 = Colors.Button
+                    }):Play()
+                end
             end)
             
-            -- Add click effect
+            -- Click effects
             button.MouseButton1Down:Connect(function()
-                TweenService:Create(button, TweenInfo.new(0.1), {
-                    Size = UDim2.new(0.93, 0, 0, MenuSystem.ButtonHeight - 2)
-                }):Play()
+                if not waitingForBind then
+                    TweenService:Create(button, TweenInfo.new(0.1), {
+                        Size = UDim2.new(0, buttonWidth * 0.98, 1, -2)
+                    }):Play()
+                end
             end)
             
             button.MouseButton1Up:Connect(function()
-                TweenService:Create(button, TweenInfo.new(0.1), {
-                    Size = UDim2.new(0.95, 0, 0, MenuSystem.ButtonHeight)
-                }):Play()
+                if not waitingForBind then
+                    TweenService:Create(button, TweenInfo.new(0.1), {
+                        Size = UDim2.new(0, buttonWidth, 1, 0)
+                    }):Play()
+                end
             end)
             
             if callback then
-                button.MouseButton1Click:Connect(callback)
+                button.MouseButton1Click:Connect(function()
+                    if not waitingForBind then
+                        callback()
+                    end
+                end)
             end
             
-            -- Update ScrollingFrame canvas size
             tab.Frame.CanvasSize = UDim2.new(0, 0, 0, tab.ButtonCount * (MenuSystem.ButtonHeight + MenuSystem.ButtonSpacing))
             
             return button
         end
     end
 end
+
+-- Create Keybinds tab
+local keybindsTab = MenuSystem.createTab("Keybinds")
 
 -- Toggle menu visibility with animation
 function MenuSystem.toggleMenu()
@@ -546,17 +832,82 @@ end
 
 -- В конце скрипта, после создания табов, добавьте кнопку Delete GUI
 MenuSystem.createButton("Options", 1, "Delete GUI", function()
-    -- Создаем анимацию исчезновения перед удалением
+    -- Отключаем все функции перед удалением
+    
+    -- Отключаем ESP если включен
+    if MenuSystem.wallhackEnabled then
+        MenuSystem.toggleESP()
+    end
+    
+    -- Отключаем Noclip если включен  
+    if MenuSystem.noclipEnabled then
+        MenuSystem.toggleNoclip()
+    end
+    
+    -- Отключаем все соединения и события
+    if MenuSystem.noclipConnection then
+        MenuSystem.noclipConnection:Disconnect()
+    end
+    
+    -- Очищаем ESP объекты
+    for player, objects in pairs(MenuSystem.espObjects) do
+        MenuSystem.removePlayerESP(player)
+    end
+    
+    -- Восстанавливаем настройки освещения
+    local lighting = game:GetService("Lighting")
+    pcall(function()
+        lighting.GlobalShadows = true
+        lighting.Brightness = 1
+    end)
+    
+    -- Очищаем все уведомления
+    for _, notification in ipairs(MenuSystem.notifications.active) do
+        if notification and notification.Parent then
+            notification:Destroy() 
+        end
+    end
+    
+    -- Анимация исчезновения
     local fadeOut = TweenService:Create(mainFrame, TweenInfo.new(0.5), {
         Transparency = 1,
-        Position = UDim2.new(0.5, -125, 1.5, 0) -- Анимация "падения" вниз
+        Position = UDim2.new(0.5, -125, 1.5, 0)
     })
     
     fadeOut:Play()
     fadeOut.Completed:Connect(function()
+        -- Удаляем GUI и очищаем данные
         MenuSystem.deleteGUI()
+        MenuSystem.notifications = {queue = {}, active = {}, isProcessing = false}
+        MenuSystem.espObjects = {}
+        MenuSystem.Settings = nil
+        MenuSystem.ESP_CONFIG = nil
+        MenuSystem = nil
     end)
+    
+    -- Показываем финальное уведомление
+    MenuSystem.showNotification(
+        "GUI Deleted",
+        "All features have been disabled and removed",
+        "info"
+    )
 end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -- Добавляем необходимые сервисы в начало скрипта
 local Players = game:GetService("Players")
@@ -583,6 +934,9 @@ function MenuSystem.createPlayerESP(player)
     local character = player.Character
     if not character then return end
     
+    local humanoid = character:FindFirstChild("Humanoid")
+    if not humanoid then return end
+    
     -- Create highlight
     local highlight = Instance.new("Highlight")
     highlight.FillColor = MenuSystem.ESP_CONFIG.HIGHLIGHT_COLOR
@@ -591,7 +945,7 @@ function MenuSystem.createPlayerESP(player)
     highlight.OutlineTransparency = 0
     highlight.Parent = character
     
-    -- Create BillboardGui
+    -- Create BillboardGui for name
     local billboard = Instance.new("BillboardGui")
     billboard.Name = "ESPBillboard"
     billboard.Size = UDim2.new(0, 200, 0, 50)
@@ -603,7 +957,7 @@ function MenuSystem.createPlayerESP(player)
     local nameLabel = Instance.new("TextLabel")
     nameLabel.Size = UDim2.new(1, 0, 1, 0)
     nameLabel.BackgroundTransparency = 1
-    nameLabel.Text = player.Name
+    nameLabel.Text = string.format("%s [ %dhp ]", player.Name, humanoid.Health)
     nameLabel.TextColor3 = MenuSystem.ESP_CONFIG.TEXT_COLOR
     nameLabel.TextStrokeColor3 = MenuSystem.ESP_CONFIG.TEXT_STROKE_COLOR
     nameLabel.TextStrokeTransparency = 0
@@ -611,9 +965,17 @@ function MenuSystem.createPlayerESP(player)
     nameLabel.Font = Enum.Font.GothamBold
     nameLabel.Parent = billboard
     
+    -- Connect health changed event
+    local healthChanged = humanoid.HealthChanged:Connect(function(health)
+        if nameLabel then
+            nameLabel.Text = string.format("%s [ %dhp ]", player.Name, health)
+        end
+    end)
+    
     MenuSystem.espObjects[player] = {
         highlight = highlight,
-        billboard = billboard
+        billboard = billboard,
+        healthConnection = healthChanged
     }
 end
 
@@ -622,12 +984,20 @@ function MenuSystem.removePlayerESP(player)
     if objects then
         if objects.highlight then objects.highlight:Destroy() end
         if objects.billboard then objects.billboard:Destroy() end
+        if objects.healthConnection then objects.healthConnection:Disconnect() end
         MenuSystem.espObjects[player] = nil
     end
 end
 
 function MenuSystem.toggleESP()
     MenuSystem.wallhackEnabled = not MenuSystem.wallhackEnabled
+    
+    -- Show notification for ESP toggle
+    MenuSystem.showNotification(
+        "ESP " .. (MenuSystem.wallhackEnabled and "Enabled" or "Disabled"),
+        MenuSystem.wallhackEnabled and "ESP features are now active" or "ESP features have been disabled",
+        MenuSystem.wallhackEnabled and "success" or "info"
+    )
     
     if MenuSystem.wallhackEnabled then
         -- Set up ESP for existing players
@@ -640,6 +1010,11 @@ function MenuSystem.toggleESP()
         -- Connect player events
         Players.PlayerAdded:Connect(function(player)
             if MenuSystem.wallhackEnabled then
+                MenuSystem.showNotification(
+                    "Player Joined",
+                    player.Name .. " has joined the game",
+                    "info"
+                )
                 player.CharacterAdded:Connect(function()
                     if MenuSystem.wallhackEnabled then
                         wait(0.5)
@@ -651,6 +1026,11 @@ function MenuSystem.toggleESP()
         
         Players.PlayerRemoving:Connect(function(player)
             MenuSystem.removePlayerESP(player)
+            MenuSystem.showNotification(
+                "Player Left",
+                player.Name .. " has left the game",
+                "warning"
+            )
         end)
         
         -- Handle respawning
@@ -680,6 +1060,12 @@ function MenuSystem.toggleESP()
         for player, _ in pairs(MenuSystem.espObjects) do
             MenuSystem.removePlayerESP(player)
         end
+        
+        MenuSystem.showNotification(
+            "ESP Cleanup",
+            "All ESP elements have been removed",
+            "info"
+        )
     end
 end
 
@@ -689,28 +1075,70 @@ end
 
 
 function MenuSystem.formatTimeDisplay()
-    local date = os.date("!*t") -- UTC время
-    local months = {
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    }
-    
-    return string.format("%s %d, %d %02d:%02d:%02d UTC",
-        months[date.month], date.day, date.year,
-        date.hour, date.min, date.sec)
+    local date = os.date("!*t")
+    return string.format("%02d:%02d:%02d UTC", date.hour, date.min, date.sec)
 end
 
-function MenuSystem.updateSessionInfo()
-    if not MenuSystem.sessionLabel then return end
+function MenuSystem.createSessionInfo()
+    -- Create container frame
+    local container = Instance.new("Frame")
+    container.Name = "SessionContainer" 
+    container.Size = UDim2.new(0, 200, 0, 60)
+    container.Position = UDim2.new(1, -200, 0, 295)
+    container.BackgroundTransparency = 1
+    container.Parent = mainFrame
+
+    -- Create player image
+    local playerImage = Instance.new("ImageLabel")
+    playerImage.Name = "PlayerImage"
+    playerImage.Size = UDim2.new(0, 40, 0, 40)
+    playerImage.Position = UDim2.new(1, -45, 0, 10)
+    playerImage.BackgroundTransparency = 0
+    playerImage.Image = "rbxthumb://type=AvatarHeadShot&id=" .. game.Players.LocalPlayer.UserId .. "&w=100&h=100"
+    playerImage.Parent = container
+
+    -- Add rounded corners to image
+    local imageCorner = Instance.new("UICorner")
+    imageCorner.CornerRadius = UDim.new(0.5, 0)
+    imageCorner.Parent = playerImage
     
-    local userInfo = game.Players.LocalPlayer.Name
-    local timeInfo = MenuSystem.formatTimeDisplay()
+    -- Add glow effect
+    local glow = Instance.new("ImageLabel")
+    glow.Name = "Glow"
+    glow.Size = UDim2.new(1.2, 0, 1.2, 0)
+    glow.Position = UDim2.new(-0.1, 0, -0.1, 0)
+    glow.BackgroundTransparency = 1
+    glow.Image = "rbxassetid://4996891970"
+    glow.ImageColor3 = Color3.fromRGB(115, 125, 255)
+    glow.ImageTransparency = 0.7
+    glow.Parent = playerImage
+
+    -- Create session info text
+    local sessionLabel = Instance.new("TextLabel")
+    sessionLabel.Name = "SessionInfo"
+    sessionLabel.Size = UDim2.new(0, 150, 0, 40)
+    sessionLabel.Position = UDim2.new(0, 0, 0, 10)
+    sessionLabel.BackgroundTransparency = 1
+    sessionLabel.Font = Enum.Font.GothamMedium
+    sessionLabel.TextSize = 14
+    sessionLabel.TextColor3 = Color3.fromRGB(222, 222, 222)
+    sessionLabel.TextXAlignment = Enum.TextXAlignment.Left
+    sessionLabel.Parent = container
     
-    MenuSystem.sessionLabel.Text = string.format([[
-Session Information:
-User: %s
-Time: %s]], userInfo, timeInfo)
+    -- Update time every second
+    game:GetService("RunService").Heartbeat:Connect(function()
+        if sessionLabel and sessionLabel.Parent then
+            local userInfo = game.Players.LocalPlayer.Name
+            local timeInfo = MenuSystem.formatTimeDisplay()
+            sessionLabel.Text = string.format("User: %s\nTime: %s", userInfo, timeInfo)
+        end
+    end)
+    
+    return container, sessionLabel, playerImage
 end
+
+-- Call this after creating mainFrame
+MenuSystem.sessionContainer, MenuSystem.sessionLabel, MenuSystem.playerImage = MenuSystem.createSessionInfo()
 
 function MenuSystem.createInfoPanel()
     if not MenuSystem.infoPanel then
@@ -834,11 +1262,23 @@ function MenuSystem.createColorPicker()
                 end
             end
         end
+
+        -- Show notification when color is updated
+        MenuSystem.showNotification(
+            "Color Updated",
+            string.format("ESP color changed to RGB(%d, %d, %d)", 
+                math.floor(newColor.R * 255),
+                math.floor(newColor.G * 255), 
+                math.floor(newColor.B * 255)),
+            "success"
+        )
     end
     
     -- Add drag functionality to sliders
     local function makeDraggable(slider)
         local dragging = false
+        local lastUpdate = 0
+        local updateDelay = 0.1 -- Delay between notifications in seconds
         
         slider.InputBegan:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -865,6 +1305,17 @@ function MenuSystem.createColorPicker()
             if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
                 local relativeX = math.clamp((input.Position.X - slider.Parent.AbsolutePosition.X) / slider.Parent.AbsoluteSize.X, 0, 1)
                 slider.Size = UDim2.new(relativeX, 0, 1, 0)
+                
+                -- Update notification with delay
+                local currentTime = tick()
+                if currentTime - lastUpdate >= updateDelay then
+                    lastUpdate = currentTime
+                    MenuSystem.showNotification(
+                        "Adjusting Color",
+                        "Drag slider to adjust ESP color",
+                        "info"
+                    )
+                end
             end
         end)
     end
@@ -872,6 +1323,23 @@ function MenuSystem.createColorPicker()
     makeDraggable(rSlider)
     makeDraggable(gSlider)
     makeDraggable(bSlider)
+
+    -- Show notification when color picker is opened/closed
+    colorPickerGui:GetPropertyChangedSignal("Visible"):Connect(function()
+        if colorPickerGui.Visible then
+            MenuSystem.showNotification(
+                "Color Picker Opened",
+                "Adjust the RGB sliders to change ESP colors",
+                "info"
+            )
+        else
+            MenuSystem.showNotification(
+                "Color Picker Closed",
+                "ESP color settings saved",
+                "success"
+            )
+        end
+    end)
     
     return colorPickerGui
 end
@@ -887,29 +1355,6 @@ MenuSystem.createButton("Visible", 2, "Change Colors", function()
 end)
 
 -- Обновляем функцию удаления GUI
-local oldDeleteGUI = MenuSystem.deleteGUI
-MenuSystem.deleteGUI = function()
-    -- Отключаем Noclip перед удалением
-    if MenuSystem.noclipConnection then
-        MenuSystem.noclipConnection:Disconnect()
-        MenuSystem.noclipConnection = nil
-    end
-    
-    -- Восстанавливаем коллизии
-    local character = game.Players.LocalPlayer.Character
-    if character then
-        for _, part in pairs(character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = true
-            end
-        end
-    end
-    
-    MenuSystem.noclipEnabled = false
-    
-    -- Вызываем оригинальную функцию удаления
-    oldDeleteGUI()
-end
 
 -- Обновляем функцию удаления GUI
 local oldDeleteGUI = MenuSystem.deleteGUI
@@ -966,17 +1411,7 @@ function MenuSystem.optimizeGame()
     end
 end
 
--- Добавляем обработчик клавиши X для Noclip
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if not gameProcessed and input.KeyCode == Enum.KeyCode.X then
-        MenuSystem.toggleNoclip()
-        -- Обновляем текст кнопки
-        local button = MenuSystem.Tabs[3].Frame:FindFirstChild("Button_1")
-        if button then
-            button.Text = "Noclip [X] " .. (MenuSystem.noclipEnabled and "(ON)" or "(OFF)")
-        end
-    end
-end)
+
 
 -- Обновляем функцию удаления GUI, чтобы отключить Noclip
 local oldDeleteGUI = MenuSystem.deleteGUI
@@ -1075,76 +1510,10 @@ end
 -- КНОПКИ 
 
 -- Добавляем необходимые переменные в MenuSystem
-MenuSystem.noclipEnabled = false
-MenuSystem.noclipConnection = nil
-
-function MenuSystem.toggleNoclip()
-    MenuSystem.noclipEnabled = not MenuSystem.noclipEnabled
-    
-    -- Получаем персонажа
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    
-    -- Отключаем предыдущее соединение, если оно существует
-    if MenuSystem.noclipConnection then
-        MenuSystem.noclipConnection:Disconnect()
-        MenuSystem.noclipConnection = nil
-    end
-    
-    -- Если Noclip включен, создаем новое соединение
-    if MenuSystem.noclipEnabled then
-        MenuSystem.noclipConnection = game:GetService("RunService").Stepped:Connect(function()
-            if character and character:FindFirstChild("Humanoid") then
-                for _, part in pairs(character:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        part.CanCollide = false
-                    end
-                end
-            end
-        end)
-    else
-        -- Восстанавливаем коллизии
-        if character and character:FindFirstChild("Humanoid") then
-            for _, part in pairs(character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.CanCollide = true
-                end
-            end
-        end
-    end
-    
-    -- Подключаем обработчик для нового персонажа
-    player.CharacterAdded:Connect(function(newCharacter)
-        character = newCharacter
-        wait(0.1) -- Ждем загрузки персонажа
-        
-        -- Если Noclip все еще включен, применяем его к новому персонажу
-        if MenuSystem.noclipEnabled and MenuSystem.noclipConnection then
-            for _, part in pairs(character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.CanCollide = false
-                end
-            end
-        end
-    end)
-    
-    -- Обновляем текст кнопки
-    local button = MenuSystem.Tabs[3].Frame:FindFirstChild("Button_1")
-    if button then
-        button.Text = "Noclip [X] " .. (MenuSystem.noclipEnabled and "(ON)" or "(OFF)")
-    end
-end
 
 -- Обновляем создание кнопки Noclip
-MenuSystem.createButton("Misc", 1, "Noclip [X]", function()
+MenuSystem.createButton("Misc", 1, "Noclip", function()
     MenuSystem.toggleNoclip()
-end)
-
--- Обновляем обработчик клавиши X
-game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
-    if not gameProcessed and input.KeyCode == Enum.KeyCode.X then
-        MenuSystem.toggleNoclip()
-    end
 end)
 
 -- Функция получения текущей даты и времени в UTC
@@ -1295,15 +1664,22 @@ function MenuSystem.toggleNoclip()
         MenuSystem.noclipConnection = nil
     end
     
+    -- Функция для установки CanCollide
+    local function setCanCollide(char, state)
+        if char then
+            for _, part in pairs(char:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = state
+                end
+            end
+        end
+    end
+    
     if MenuSystem.noclipEnabled then
         -- Создаем новое соединение для Noclip
-        MenuSystem.noclipConnection = game:GetService("RunService").Stepped:Connect(function()
+        MenuSystem.noclipConnection = game:GetService("RunService").Heartbeat:Connect(function()
             if character and character:FindFirstChild("Humanoid") then
-                for _, part in pairs(character:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        part.CanCollide = false
-                    end
-                end
+                setCanCollide(character, false)
             end
         end)
         
@@ -1314,14 +1690,13 @@ function MenuSystem.toggleNoclip()
             "success"
         )
     else
-        -- Восстанавливаем коллизии
-        if character and character:FindFirstChild("Humanoid") then
-            for _, part in pairs(character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.CanCollide = true
-                end
+        -- Восстанавливаем коллизии с небольшой задержкой
+        task.spawn(function()
+            task.wait(0.1)
+            if character and character:FindFirstChild("Humanoid") then
+                setCanCollide(character, true)
             end
-        end
+        end)
         
         -- Показываем уведомление о выключении
         MenuSystem.showNotification(
@@ -1334,30 +1709,27 @@ function MenuSystem.toggleNoclip()
     -- Обновляем текст кнопки
     local button = MenuSystem.Tabs[3].Frame:FindFirstChild("Button_1")
     if button then
-        button.Text = "Noclip [X] " .. (MenuSystem.noclipEnabled and "(ON)" or "(OFF)")
+        button.Text = "Noclip " .. (MenuSystem.noclipEnabled and "(ON)" or "(OFF)")
     end
     
-    -- Подключаем обработчик для нового персонажа
-    player.CharacterAdded:Connect(function(newCharacter)
+    -- Обработчик для нового персонажа
+    local function onCharacterAdded(newCharacter)
         character = newCharacter
         task.wait(0.1)
         
         if MenuSystem.noclipEnabled and MenuSystem.noclipConnection then
-            for _, part in pairs(character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.CanCollide = false
-                end
-            end
+            setCanCollide(character, false)
         end
-    end)
-end
-
--- Обновляем обработчик клавиши X
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if not gameProcessed and input.KeyCode == Enum.KeyCode.X then
-        MenuSystem.toggleNoclip()
     end
-end)
+    
+    -- Удаляем предыдущий обработчик, если он существует
+    if MenuSystem.characterAddedConnection then
+        MenuSystem.characterAddedConnection:Disconnect()
+    end
+    
+    -- Создаем новый обработчик
+    MenuSystem.characterAddedConnection = player.CharacterAdded:Connect(onCharacterAdded)
+end
 
 -- Обновленная функция очистки при удалении GUI
 function MenuSystem.deleteGUI()
@@ -1414,15 +1786,85 @@ function MenuSystem.createDescriptionText(text, position, isTitle)
 end
 
 -- Создаем заголовок
-local titleLabel = MenuSystem.createDescriptionText("Enhanced Menu Changelog", 10, true)
+local titleLabel = MenuSystem.createDescriptionText("Changelog", 10, true)
 
 -- Добавляем версии и их изменения
-local versionData = {
+local versionData = {            --date = os.date("!%Y-%m-%d"),
+{
+    version = "Version 1.5",
+    date = os.date("!%Y-%m-%d"),
+    changes = {
+        "Added Auto Press feature:",
+        "• Automatic Q key pressing",
+        "• Adjustable delay settings",
+        "• Toggle with V key",
+        "• Visual feedback and notifications"
+
+}
+    },
+    {
+        version = "Version 1.4",
+        date = "2025-03-31",
+        changes = {
+            "Added Config System:",
+            "• Save/Load settings functionality",
+            "• Settings reset option",
+            "• Automatic settings restore",
+            "• JSON config file storage"
+        }
+    },
+    {
+        version = "Version 1.3", 
+        date = "2025-03-30",
+        changes = {
+            "Enhanced ESP System:",
+            "• Added team/enemy color differentiation",
+            "• Improved color picker interface",
+            "• Added ESP toggle notifications",
+            "• Optimized ESP performance"
+        }
+    },
     {
         version = "Version 1.2",
         date = "2025-03-30",
         changes = {
-            "Added Aimbot tab with advanced features:",
+            "Enhanced Notification System:",
+            "• Added notification queue",
+            "• Different notification types",
+            "• Smooth animations",
+            "• Auto-close functionality"
+        }
+    },
+    {
+        version = "Version 1.1",
+        date = "2025-03-30", 
+        changes = {
+            "Added Game Optimization:",
+            "• Texture quality reduction",
+            "• Particle effect removal",
+            "• Lighting optimization",
+            "• Performance monitoring",
+            "Enhanced Noclip:",
+            "• Added keybind system",
+            "• Improved collision handling"
+        }
+    },
+    {
+        version = "Version 1.0",
+        date = "2025-03-30",
+        changes = {
+            "Initial Release:",
+            "• Basic ESP functionality",
+            "• Platform selector",
+            "• Tab system",
+            "• Basic UI elements"
+        }
+    },
+    {
+        version = "Version 0.9",
+        date = "2025-03-30",
+        changes = {
+            --"Added Aimbot tab with advanced features:",
             "• Custom aim target selection",
             "• Player lock system",
             "• FOV circle visualization",
@@ -1431,7 +1873,7 @@ local versionData = {
         }
     },
     {
-        version = "Version 1.1",
+        version = "Version 0.8",
         date = "2025-03-30",
         changes = {
             "Added Notification system",
@@ -1441,7 +1883,7 @@ local versionData = {
         }
     },
     {
-        version = "Version 1.0",
+        version = "Version 0.7",
         date = "2025-03-30",
         changes = {
             "Added Noclip feature",
@@ -1451,8 +1893,19 @@ local versionData = {
         }
     },
     {
-        version = "Version 0.2-0.9",
-        date = "2025-02-15",
+    version = "Version 0.6",
+    date = "2025-03-30",
+    changes = {
+        "Added ESP features:",
+        "• Toggle ESP functionality",
+        "• Customizable colors for Team, Enemy, and Boxes",
+        "• Color picker interface",
+        "• Improved notifications for ESP settings"
+    }
+},
+{
+        version = "Version 0.2-0.5",
+        date = "2025-03-30",
         changes = {
             "MENU GLOBAL SETTINGS: ADD",
             "Added Noclip feature",
@@ -1463,7 +1916,7 @@ local versionData = {
     },
     {
         version = "Version 0.1",
-        date = "2025-02-01",
+        date = "2025-03-30",
         changes = {
             "Initial release",
             "Added ESP feature",
@@ -1481,23 +1934,6 @@ MenuSystem.ESPSettings = {
         Box = Color3.fromRGB(255, 255, 255)
     }
 }
-
--- Создаем кнопку Enable ESP
-MenuSystem.createButton("Visuals", 3, "ESP: OFF", function()
-    MenuSystem.ESPSettings.Enabled = not MenuSystem.ESPSettings.Enabled
-    local button = MenuSystem.Tabs[2].Frame:FindFirstChild("Button_3")
-    if button then
-        button.Text = "ESP: " .. (MenuSystem.ESPSettings.Enabled and "ON" or "OFF")
-        button.TextColor3 = MenuSystem.ESPSettings.Enabled and Color3.fromRGB(0, 255, 0) or Colors.TextColor
-    end
-    
-    -- Добавляем уведомление
-    MenuSystem.showNotification(
-        "ESP " .. (MenuSystem.ESPSettings.Enabled and "Enabled" or "Disabled"),
-        MenuSystem.ESPSettings.Enabled and "ESP features are now active" or "ESP features have been disabled",
-        MenuSystem.ESPSettings.Enabled and "success" or "info"
-    )
-end)
 
 -- Функция для создания цветового пикера
 function MenuSystem.createColorPicker(tab, position, title, defaultColor, callback)
@@ -1637,19 +2073,6 @@ MenuSystem.createButton("Visuals", 4, "Change Colors", function()
         "info"
     )
 end)
-
--- Обновляем информацию в Description
-table.insert(versionData, 1, {
-    version = "Version 1.3",
-    date = os.date("!%Y-%m-%d"),
-    changes = {
-        "Added ESP features:",
-        "• Toggle ESP functionality",
-        "• Customizable colors for Team, Enemy, and Boxes",
-        "• Color picker interface",
-        "• Improved notifications for ESP settings"
-    }
-})
 
 -- Функция для создания разделителя
 function MenuSystem.createDivider()
@@ -1854,6 +2277,371 @@ end)
 
 
 
+
+
+
+
+
+
+
+
+-- Добавляем вкладку Config
+local configTab = MenuSystem.createTab("Config")
+
+-- Создаем хранилище настроек
+MenuSystem.Settings = {
+    ESP = {
+        Enabled = false,
+        Colors = MenuSystem.ESP_CONFIG or {
+            HIGHLIGHT_COLOR = Color3.fromRGB(136, 155, 155),
+            TEXT_COLOR = Color3.fromRGB(136, 155, 155),
+            TEXT_STROKE_COLOR = Color3.fromRGB(0, 0, 0)
+        }
+    },
+    Noclip = {
+        Enabled = false,
+        KeyBind = Enum.KeyCode.X
+    },
+    Optimization = {
+        LastOptimized = 0,
+        AutoOptimize = false
+    },
+    Interface = {
+        Theme = {
+            Background = Colors.Background,
+            Button = Colors.Button,
+            ButtonHover = Colors.ButtonHover,
+            AccentColor = Colors.AccentColor,
+            TextColor = Colors.TextColor
+        }
+    }
+}
+
+-- Функция сохранения настроек
+function MenuSystem.saveSettings()
+    local success, encoded = pcall(function()
+        local settings = {
+            ESP = {
+                Enabled = MenuSystem.wallhackEnabled,
+                Colors = {
+                    HIGHLIGHT_COLOR = {
+                        R = MenuSystem.ESP_CONFIG.HIGHLIGHT_COLOR.R,
+                        G = MenuSystem.ESP_CONFIG.HIGHLIGHT_COLOR.G,
+                        B = MenuSystem.ESP_CONFIG.HIGHLIGHT_COLOR.B
+                    },
+                    TEXT_COLOR = {
+                        R = MenuSystem.ESP_CONFIG.TEXT_COLOR.R,
+                        G = MenuSystem.ESP_CONFIG.TEXT_COLOR.G,
+                        B = MenuSystem.ESP_CONFIG.TEXT_COLOR.B
+                    }
+                }
+            },
+            Noclip = {
+                Enabled = MenuSystem.noclipEnabled,
+                KeyBind = tostring(Enum.KeyCode.X)
+            },
+            Optimization = MenuSystem.Settings.Optimization
+        }
+        return game:GetService("HttpService"):JSONEncode(settings)
+    end)
+
+    if success then
+        writefile("MenuSystem_Settings.json", encoded)
+        MenuSystem.showNotification(
+            "Settings Saved",
+            "Your settings have been saved successfully",
+            "success"
+        )
+    else
+        MenuSystem.showNotification(
+            "Save Error",
+            "Failed to save settings",
+            "error"
+        )
+    end
+end
+
+-- Функция загрузки настроек
+function MenuSystem.loadSettings()
+    if isfile("MenuSystem_Settings.json") then
+        local success, decoded = pcall(function()
+            local data = readfile("MenuSystem_Settings.json")
+            return game:GetService("HttpService"):JSONDecode(data)
+        end)
+
+        if success then
+            -- Применяем загруженные настройки ESP
+            if decoded.ESP then
+                MenuSystem.ESP_CONFIG.HIGHLIGHT_COLOR = Color3.new(
+                    decoded.ESP.Colors.HIGHLIGHT_COLOR.R,
+                    decoded.ESP.Colors.HIGHLIGHT_COLOR.G,
+                    decoded.ESP.Colors.HIGHLIGHT_COLOR.B
+                )
+                MenuSystem.ESP_CONFIG.TEXT_COLOR = Color3.new(
+                    decoded.ESP.Colors.TEXT_COLOR.R,
+                    decoded.ESP.Colors.TEXT_COLOR.G,
+                    decoded.ESP.Colors.TEXT_COLOR.B
+                )
+                
+                if decoded.ESP.Enabled then
+                    MenuSystem.toggleESP()
+                end
+            end
+
+            -- Применяем настройки Noclip
+            if decoded.Noclip and decoded.Noclip.Enabled then
+                MenuSystem.toggleNoclip()
+            end
+
+            -- Применяем настройки к существующим ESP объектам
+            for _, objects in pairs(MenuSystem.espObjects) do
+                if objects.highlight then
+                    objects.highlight.FillColor = MenuSystem.ESP_CONFIG.HIGHLIGHT_COLOR
+                    objects.highlight.OutlineColor = MenuSystem.ESP_CONFIG.HIGHLIGHT_COLOR
+                end
+                if objects.billboard then
+                    local nameLabel = objects.billboard:FindFirstChild("TextLabel")
+                    if nameLabel then
+                        nameLabel.TextColor3 = MenuSystem.ESP_CONFIG.TEXT_COLOR
+                    end
+                end
+            end
+
+            MenuSystem.showNotification(
+                "Settings Loaded",
+                "Your settings have been restored",
+                "success"
+            )
+        else
+            MenuSystem.showNotification(
+                "Load Error",
+                "Failed to load settings",
+                "error"
+            )
+        end
+    end
+end
+
+-- Создаем кнопки в Config табе
+MenuSystem.createButton("Config", 1, "Save Settings", function()
+    MenuSystem.saveSettings()
+end)
+
+MenuSystem.createButton("Config", 2, "Load Settings", function()
+    MenuSystem.loadSettings()
+end)
+
+MenuSystem.createButton("Config", 3, "Reset Settings", function()
+    if isfile("MenuSystem_Settings.json") then
+        delfile("MenuSystem_Settings.json")
+    end
+    
+    -- Сбрасываем ESP настройки
+    MenuSystem.ESP_CONFIG = {
+        HIGHLIGHT_COLOR = Color3.fromRGB(136, 155, 155),
+        TEXT_COLOR = Color3.fromRGB(136, 155, 155),
+        TEXT_STROKE_COLOR = Color3.fromRGB(0, 0, 0),
+        TEXT_SIZE = 15,
+        BILLBOARD_OFFSET = Vector3.new(0, 2.5, 0)
+    }
+    
+    -- Отключаем ESP и Noclip если они были включены
+    if MenuSystem.wallhackEnabled then
+        MenuSystem.toggleESP()
+    end
+    
+    if MenuSystem.noclipEnabled then
+        MenuSystem.toggleNoclip()
+    end
+    
+    MenuSystem.showNotification(
+        "Settings Reset",
+        "All settings have been reset to default",
+        "info"
+    )
+end)
+
+-- Добавляем автозагрузку настроек при запуске
+MenuSystem.loadSettings()
+
+
+
+
+
+
+
+
+
+
+
+-- Добавляем настройки автонажатия
+MenuSystem.AutoPressSettings = {
+    Enabled = false,
+    Key = "Q",
+    Delay = 0, -- Задержка между нажатиями в секундах
+    Connection = nil
+}
+
+-- Функция для симуляции нажатия клавиши
+function MenuSystem.startAutoPress()
+    if MenuSystem.AutoPressSettings.Connection then
+        MenuSystem.AutoPressSettings.Connection:Disconnect()
+        MenuSystem.AutoPressSettings.Connection = nil
+    end
+
+    -- Создаем новое соединение для автонажатия
+    MenuSystem.AutoPressSettings.Connection = game:GetService("RunService").Heartbeat:Connect(function()
+        if MenuSystem.AutoPressSettings.Enabled then
+            local virtualInputManager = game:GetService("VirtualInputManager")
+            
+            -- Симулируем нажатие клавиши Q
+            virtualInputManager:SendKeyEvent(true, Enum.KeyCode.Q, false, game)
+            task.wait(0.000000000001) -- Небольшая задержка между нажатием и отпусканием
+            virtualInputManager:SendKeyEvent(false, Enum.KeyCode.Q, false, game)
+            
+            task.wait(MenuSystem.AutoPressSettings.Delay) -- Задержка между нажатиями
+        end
+    end)
+end
+
+-- Создаем кнопку Auto Press Q
+MenuSystem.createButton("Game", 1, "Auto Press Q", function()
+    MenuSystem.AutoPressSettings.Enabled = not MenuSystem.AutoPressSettings.Enabled
+    
+    -- Обновляем текст кнопки
+    local button = MenuSystem.Tabs[3].Frame:FindFirstChild("Button_3")
+    if button then
+        button.Text = "Auto Press Q: " .. (MenuSystem.AutoPressSettings.Enabled and "ON" or "OFF")
+        button.TextColor3 = MenuSystem.AutoPressSettings.Enabled and Color3.fromRGB(0, 255, 0) or Colors.TextColor
+    end
+    
+    if MenuSystem.AutoPressSettings.Enabled then
+        MenuSystem.startAutoPress()
+        
+        -- Показываем уведомление о включении
+        MenuSystem.showNotification(
+            "Auto Press Enabled",
+            "Automatically pressing Q key",
+            "success"
+        )
+    else
+        if MenuSystem.AutoPressSettings.Connection then
+            MenuSystem.AutoPressSettings.Connection:Disconnect()
+            MenuSystem.AutoPressSettings.Connection = nil
+        end
+        
+        -- Показываем уведомление о выключении
+        MenuSystem.showNotification(
+            "Auto Press Disabled",
+            "Stopped pressing Q key",
+            "info"
+        )
+    end
+end)
+
+-- Создаем слайдер для настройки задержки
+MenuSystem.createSlider("Game", 2, "Auto Press Delay", 0.1, 2, MenuSystem.AutoPressSettings.Delay, function(value)
+    MenuSystem.AutoPressSettings.Delay = value
+    
+    -- Показываем уведомление об изменении задержки
+    MenuSystem.showNotification(
+        "Delay Updated",
+        string.format("Auto press delay set to %.2f seconds", value),
+        "info"
+    )
+end)
+
+-- Функция для получения ближайшего игрока в поле зрения
+local function getClosestPlayerInFOV()
+    local player = game.Players.LocalPlayer
+    local camera = game.Workspace.CurrentCamera
+    local closestPlayer = nil
+    local closestAngle = math.rad(70) -- FOV в радианах (70 градусов)
+    local closestDistance = math.huge
+    
+    for _, otherPlayer in pairs(game.Players:GetPlayers()) do
+        if otherPlayer ~= player and otherPlayer.Character and 
+           otherPlayer.Character:FindFirstChild("HumanoidRootPart") and 
+           otherPlayer.Character:FindFirstChild("Humanoid") and 
+           otherPlayer.Character.Humanoid.Health > 0 then
+            
+            local targetPos = otherPlayer.Character.HumanoidRootPart.Position
+            local screenPoint = camera:WorldToScreenPoint(targetPos)
+            
+            -- Проверяем, находится ли игрок в поле зрения
+            if screenPoint.Z > 0 then
+                local centerScreen = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2)
+                local screenPos = Vector2.new(screenPoint.X, screenPoint.Y)
+                local angle = math.atan2(screenPos.Y - centerScreen.Y, screenPos.X - centerScreen.X)
+                
+                if math.abs(angle) < closestAngle then
+                    local distance = (targetPos - player.Character.HumanoidRootPart.Position).Magnitude
+                    if distance < closestDistance then
+                        closestDistance = distance
+                        closestPlayer = otherPlayer
+                    end
+                end
+            end
+        end
+    end
+    
+    return closestPlayer
+end
+
+-- Функция для выполнения искривленного dash
+local function performCurvedDash()
+    local player = game.Players.LocalPlayer
+    local target = getClosestPlayerInFOV()
+    
+    if target and target.Character then
+        -- Получаем позиции
+        local startPos = player.Character.HumanoidRootPart.Position
+        local targetPos = target.Character.HumanoidRootPart.Position
+        
+        -- Вычисляем направление за спину цели
+        local targetLook = target.Character.HumanoidRootPart.CFrame.LookVector
+        local behindPos = targetPos - (targetLook * 5) -- 5 единиц за спиной
+        
+        -- Создаем точки для искривленной траектории
+        local midPoint = (startPos + behindPos) * 0.5
+        midPoint = midPoint + Vector3.new(0, 10, 0) -- Поднимаем среднюю точку вверх
+        
+        -- Выполняем dash
+        local args = {
+            [1] = {
+                Bool = false,
+                Request = "FrontDash",
+                Target = behindPos,
+                Curve = {
+                    startPos,
+                    midPoint,
+                    behindPos
+                }
+            }
+        }
+        
+        game:GetService("Workspace").Characters.CmeTanKa_Gaben.Network:FireServer(unpack(args))
+        
+        -- Показываем уведомление
+        MenuSystem.showNotification(
+            "Curved Dash",
+            "Performed curved dash behind " .. target.Name,
+            "success"
+        )
+    else
+        -- Уведомление, если цель не найдена
+        MenuSystem.showNotification(
+            "Dash Failed",
+            "No valid target in FOV",
+            "error"
+        )
+    end
+end
+
+-- Создаем кнопку для Curved Dash
+MenuSystem.createButton("Game", 2, "Curved Dash", function()
+    performCurvedDash()
+end)
 
 
 
